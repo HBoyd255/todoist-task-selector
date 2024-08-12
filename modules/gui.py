@@ -8,9 +8,15 @@ PAD_Y = 5
 
 
 class GUI:
-    def __init__(self, label_names: List[str], all_tasks: List[Task]) -> None:
+    def __init__(
+        self,
+        label_names: List[str],
+        all_tasks: List[Task],
+        project_name_dict: dict,
+    ) -> None:
         self._label_names = label_names
         self._all_tasks = all_tasks
+        self._project_name_dict = project_name_dict
 
         self._root = tk.Tk()
         self._root.title("Todoist Task Selector")
@@ -130,13 +136,14 @@ class GUI:
 
         random_task = random.choice(available_tasks)
 
-        random_task_name = random_task.content
-        random_task_url = random_task.url
-        random_task_description = random_task.description
+        task_name = random_task.content
+        task_url = random_task.url
+        task_description = random_task.description
+        task_project_id = random_task.project_id
 
         task_name_label = tk.Label(
             frame,
-            text=random_task_name,
+            text=task_name,
             font=("Helvetica", 16),
             wraplength=380,  # TODO update this to be dynamic
         )
@@ -145,7 +152,7 @@ class GUI:
 
         task_description_label = tk.Label(
             frame,
-            text=random_task_description,
+            text=task_description,
             font=("Helvetica", 10),
         )
         task_description_label.pack(pady=PAD_Y)
@@ -156,21 +163,22 @@ class GUI:
         view_online_button = tk.Button(
             bottom_menu,
             text="View Online",
-            command=lambda o=random_task_url: webbrowser.open(random_task_url),
+            command=lambda o=task_url: webbrowser.open(task_url),
         )
 
         view_online_button.pack(pady=PAD_Y, side="right", anchor="se")
 
+        project_name = self._project_name_dict[task_project_id]
+
         project_name_label = tk.Label(
             bottom_menu,
-            text="PROJECT: " + "se e",
+            text=f"Project: {project_name}",
             font=("Helvetica", 10),
         )
 
         project_name_label.pack(pady=PAD_Y, side="left", anchor="sw")
 
         print(random_task)
-
 
     def run(self):
         # Start the Tkinter event loop
