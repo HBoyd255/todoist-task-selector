@@ -7,7 +7,7 @@ from modules.gui import GUI
 # If set to True, the data will be loaded from the pickle files.
 # If set to False, the data will be loaded from the Todoist API.
 # This allows for faster testing.
-LOAD_FROM_PICKLE = True
+LOAD_FROM_PICKLE = False
 
 # The API key is stored in a text file to keep it secret from the git
 # repository.
