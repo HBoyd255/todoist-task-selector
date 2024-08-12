@@ -1,10 +1,12 @@
 import tkinter as tk
 import random
 import webbrowser
+from typing import List
+from todoist_api_python.models import Task
 
 
 class GUI:
-    def __init__(self, label_names, all_tasks) -> None:
+    def __init__(self, label_names: List[str], all_tasks: List[Task]) -> None:
         self._label_names = label_names
         self._all_tasks = all_tasks
 
@@ -16,27 +18,10 @@ class GUI:
 
         self._show_context_menu()
 
-    def _filter_tasks_by_label(self, label_name):
-        """Filters tasks by a label name.
+    def _filter_tasks_by_label(self, label_name: str) -> List[Task]:
+        """Filters tasks by a label name."""
 
-        Args:
-            label_name (Str): The name of the label to filter by.
-
-        Returns:
-            (List): A list of tasks that have the specified label.
-        """
-
-        # Create an empty list of tasks to return.
-        tasks_to_return = []
-
-        # Iterate through each task.
-        for task in self._all_tasks:
-            # If the label name is in the task's labels, add the task to the list.
-            if label_name in task.labels:
-                tasks_to_return.append(task)
-
-        # Return the list of tasks.
-        return tasks_to_return
+        return [task for task in self._all_tasks if label_name in task.labels]
 
     def _show_context_menu(self):
         """Shows a list of context labels as buttons."""
@@ -54,7 +39,7 @@ class GUI:
             )
             button.pack(fill=tk.BOTH, expand=True, pady=5)
 
-    def _show_task_menu(self, label):
+    def _show_task_menu(self, label: str):
         """Display the menu that details a random task from a chosen context."""
 
         # Clear the main window.
