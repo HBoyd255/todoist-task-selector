@@ -81,6 +81,18 @@ class GUI:
             )
             button.pack(fill=tk.BOTH, expand=True, padx=PAD_X, pady=PAD_Y)
 
+    def _mark_task_as_done(self, task_to_remove, current_label):
+        """Marks a task as done. This function does not remove the item from
+        todoist, but instead removes it from the GUI. I don't want to use the
+        api for anything other than getting data. To complete a task, press the
+        "View Online Button" button, then the "Done" Button"""
+
+        self._all_tasks = [
+            task for task in self._all_tasks if task != task_to_remove
+        ]
+
+        self._show_task_menu(current_label)
+
     def _show_task_menu(self, label: str):
         """Display the menu that details a random task from a chosen context."""
 
@@ -122,6 +134,8 @@ class GUI:
 
             return
 
+        random_task = random.choice(available_tasks)
+
         current_context_label = tk.Label(
             top_menu_left,
             text=f"Current Context: {label}",
@@ -142,6 +156,13 @@ class GUI:
         )
         task_count_label.pack(pady=PAD_Y, anchor="w")
 
+        done_button = self._create_button(
+            top_menu_left,
+            "Done",
+            lambda: self._mark_task_as_done(random_task, label),
+        )
+        done_button.pack(pady=PAD_Y, anchor="w")
+
         reroll_button = self._create_button(
             top_menu_right, "Reroll", lambda: self._show_task_menu(label)
         )
@@ -157,8 +178,6 @@ class GUI:
             fg=TEXT_COLOR,
         )
         selected_task_intro_label.pack(pady=PAD_Y, anchor="w")
-
-        random_task = random.choice(available_tasks)
 
         task_name = random_task.content
         task_url = random_task.url
