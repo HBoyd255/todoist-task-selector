@@ -9,3 +9,8 @@ user for their current context, and then randomly selects a task from the list.
 
 This is designed to be as simple as possible, similar to just pulling a task out
 of a hat. It's not meant to be a full-featured task manager.
+
+
+## Requirements
+
+This script requires the `todoist-python` package version 2.1.3.
