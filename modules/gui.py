@@ -24,7 +24,7 @@ class GUI:
 
         self._root.attributes("-topmost", True)
 
-        self._show_task_menu("Home")
+        self._show_context_menu()
 
     def _filter_tasks_by_label(self, label_name: str) -> List[Task]:
         """Filters tasks by a label name."""
@@ -154,6 +154,7 @@ class GUI:
             frame,
             text=task_description,
             font=("Helvetica", 10),
+            wraplength=380,  # TODO update this to be dynamic
         )
         task_description_label.pack(pady=PAD_Y)
 
