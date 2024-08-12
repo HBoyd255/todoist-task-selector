@@ -9,7 +9,9 @@ class GUI:
         self._all_tasks = all_tasks
 
         self._root = tk.Tk()
-        self._root.title("Simple Menu")
+        self._root.title("Todoist Task Selector")
+        self._root.geometry("400x400")
+        self._root.resizable(False, False)
         self._root.attributes("-topmost", True)
 
         self._show_context_menu()
