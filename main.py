@@ -7,7 +7,7 @@ from modules.gui import GUI
 # If set to True, the data will be loaded from the pickle files.
 # If set to False, the data will be loaded from the Todoist API.
 # This allows for faster testing.
-LOAD_FROM_PICKLE = False
+LOAD_FROM_PICKLE = True
 
 # The API key is stored in a text file to keep it secret from the git
 # repository.
@@ -19,6 +19,7 @@ api = TodoistAPI(API_KEY)
 
 
 def get_data():
+
     if LOAD_FROM_PICKLE:
         all_tasks = load_object("secrets/tasks.pickle")
         all_labels = load_object("secrets/labels.pickle")
@@ -46,9 +47,6 @@ def get_data():
     return label_names, all_tasks, project_name_dict
 
 
-label_names, all_tasks, project_name_dict = get_data()
-
-
-gui = GUI(label_names, all_tasks, project_name_dict)
+gui = GUI(get_data)
 
 gui.run()
