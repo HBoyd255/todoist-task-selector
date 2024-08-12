@@ -18,29 +18,35 @@ API_KEY = text_file_to_string(API_TEXT_FILE)
 api = TodoistAPI(API_KEY)
 
 
-if LOAD_FROM_PICKLE:
-    all_tasks = load_object("secrets/tasks.pickle")
-    all_labels = load_object("secrets/labels.pickle")
-    all_projects = load_object("secrets/projects.pickle")
+def get_data():
+    if LOAD_FROM_PICKLE:
+        all_tasks = load_object("secrets/tasks.pickle")
+        all_labels = load_object("secrets/labels.pickle")
+        all_projects = load_object("secrets/projects.pickle")
 
-else:
-    all_tasks = api.get_tasks()
-    all_labels = api.get_labels()
-    all_projects = api.get_projects()
+    else:
+        all_tasks = api.get_tasks()
+        all_labels = api.get_labels()
+        all_projects = api.get_projects()
 
-    save_object(all_tasks, "secrets/tasks.pickle")
-    save_object(all_labels, "secrets/labels.pickle")
-    save_object(all_projects, "secrets/projects.pickle")
+        save_object(all_tasks, "secrets/tasks.pickle")
+        save_object(all_labels, "secrets/labels.pickle")
+        save_object(all_projects, "secrets/projects.pickle")
 
-# Create a list of the label names.
-label_names = [label.name for label in all_labels]
+    # Create a list of the label names.
+    label_names = [label.name for label in all_labels]
 
-# Create a dictionary of project names.
-# This was the name of a project can be found by its ID.
-project_name_dict = {}
+    # Create a dictionary of project names.
+    # This was the name of a project can be found by its ID.
+    project_name_dict = {}
 
-for project in all_projects:
-    project_name_dict[project.id] = project.name
+    for project in all_projects:
+        project_name_dict[project.id] = project.name
+
+    return label_names, all_tasks, project_name_dict
+
+
+label_names, all_tasks, project_name_dict = get_data()
 
 
 gui = GUI(label_names, all_tasks, project_name_dict)

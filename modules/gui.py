@@ -179,8 +179,6 @@ class GUI:
 
         project_name_label.pack(pady=PAD_Y, side="left", anchor="sw")
 
-        print(random_task)
-
     def run(self):
         # Start the Tkinter event loop
         self._root.mainloop()
