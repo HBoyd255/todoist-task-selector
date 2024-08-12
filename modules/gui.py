@@ -4,6 +4,8 @@ import webbrowser
 from typing import List
 from todoist_api_python.models import Task
 
+PAD_Y = 5
+
 
 class GUI:
     def __init__(self, label_names: List[str], all_tasks: List[Task]) -> None:
@@ -13,10 +15,10 @@ class GUI:
         self._root = tk.Tk()
         self._root.title("Todoist Task Selector")
         self._root.geometry("400x400")
-        self._root.resizable(False, False)
+
         self._root.attributes("-topmost", True)
 
-        self._show_context_menu()
+        self._show_task_menu("Home")
 
     def _filter_tasks_by_label(self, label_name: str) -> List[Task]:
         """Filters tasks by a label name."""
@@ -30,14 +32,17 @@ class GUI:
         for widget in self._root.winfo_children():
             widget.destroy()
 
+        button_frame = tk.Frame(self._root)
+        button_frame.pack(fill=tk.BOTH, expand=True)
+
         # Create a button for each context label.
         for label_name in self._label_names:
             button = tk.Button(
-                self._root,
+                button_frame,
                 text=label_name,
                 command=lambda l=label_name: self._show_task_menu(l),
             )
-            button.pack(fill=tk.BOTH, expand=True, pady=5)
+            button.pack(fill=tk.BOTH, expand=True)
 
     def _show_task_menu(self, label: str):
         """Display the menu that details a random task from a chosen context."""
@@ -46,61 +51,126 @@ class GUI:
         for widget in self._root.winfo_children():
             widget.destroy()
 
-        tasks_with_label = self._filter_tasks_by_label(label)
+        frame = tk.Frame(self._root)
+        frame.pack(fill=tk.BOTH, expand=True)
 
-        task_count = len(tasks_with_label)
+        top_menu = tk.Frame(frame, bd=2, relief="solid")
+        top_menu.pack(fill=tk.BOTH, expand=False)
 
-        task_count_label = tk.Label(
-            self._root,
-            text=f"There are {task_count} tasks",
-            font=("Helvetica", 16),
-        )
-        task_count_label.pack(pady=20)
+        top_menu_left = tk.Frame(top_menu)
+        top_menu_left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        top_menu_right = tk.Frame(top_menu)
+        top_menu_right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        available_tasks = self._filter_tasks_by_label(label)
+
+        task_count = len(available_tasks)
 
         back_button = tk.Button(
-            self._root,
+            top_menu_right,
             text="Back",
             command=self._show_context_menu,
         )
 
-        back_button.pack(pady=20)
-
+        # If there are no tasks, inform the user and add a return button.
         if task_count == 0:
+            no_tasks_label = tk.Label(
+                frame,
+                text="There are no tasks in this context",
+                font=("Helvetica", 16),
+            )
+            no_tasks_label.pack(pady=PAD_Y)
+            back_button.pack(pady=PAD_Y)
+
             return
 
+        current_context_label = tk.Label(
+            top_menu_left,
+            text=f"Current Context: {label}",
+            font=("Helvetica", 10),
+        )
+        current_context_label.pack(
+            pady=PAD_Y,
+            anchor="w",
+        )
+
+        back_button.pack(
+            pady=PAD_Y,
+            anchor="e",
+        )
+
+        task_count_label = tk.Label(
+            top_menu_left,
+            text=f"Available Tasks: {task_count}",
+            font=("Helvetica", 10),
+        )
+        task_count_label.pack(
+            pady=PAD_Y,
+            anchor="w",
+        )
+
         reroll_button = tk.Button(
-            self._root,
+            top_menu_right,
             text="Reroll",
             command=lambda o=label: self._show_task_menu(label),
         )
-        reroll_button.pack(pady=20)
+        reroll_button.pack(
+            pady=PAD_Y,
+            anchor="e",
+        )
 
-        random_task = random.choice(tasks_with_label)
+        # Selected Task Part
+        selected_task_intro_label = tk.Label(
+            frame,
+            text="Selected Task:",
+            font=("Helvetica", 10),
+        )
+        selected_task_intro_label.pack(pady=PAD_Y, anchor="w")
+
+        random_task = random.choice(available_tasks)
 
         random_task_name = random_task.content
         random_task_url = random_task.url
         random_task_description = random_task.description
 
         task_name_label = tk.Label(
-            self._root, text=f"Task: {random_task_name}", font=("Helvetica", 16)
+            frame,
+            text=random_task_name,
+            font=("Helvetica", 16),
+            wraplength=380,  # TODO update this to be dynamic
         )
 
-        task_name_label.pack(pady=20)
+        task_name_label.pack(pady=PAD_Y)
 
-        if random_task_description:
-            task_description_label = tk.Label(
-                self._root,
-                text=f"{random_task_description}",
-                font=("Helvetica", 10),
-            )
-            task_description_label.pack(pady=20)
+        task_description_label = tk.Label(
+            frame,
+            text=random_task_description,
+            font=("Helvetica", 10),
+        )
+        task_description_label.pack(pady=PAD_Y)
+
+        bottom_menu = tk.Frame(frame)
+        bottom_menu.pack(fill=tk.BOTH, expand=True, side="bottom", anchor="s")
 
         view_online_button = tk.Button(
-            self._root,
+            bottom_menu,
             text="View Online",
             command=lambda o=random_task_url: webbrowser.open(random_task_url),
         )
-        view_online_button.pack(pady=20)
+
+        view_online_button.pack(pady=PAD_Y, side="right", anchor="se")
+
+        project_name_label = tk.Label(
+            bottom_menu,
+            text="PROJECT: " + "se e",
+            font=("Helvetica", 10),
+        )
+
+        project_name_label.pack(pady=PAD_Y, side="left", anchor="sw")
+
+        print(random_task)
+
 
     def run(self):
         # Start the Tkinter event loop
