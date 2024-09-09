@@ -211,7 +211,7 @@ class GUI:
         view_online_button = self._create_button(
             bottom_menu,
             "View Online",
-            lambda o=task_url: webbrowser.open(task_url),
+            lambda url=task_url: webbrowser.open(url),
         )
 
         view_online_button.pack(pady=PAD_Y, side="right", anchor="se")
